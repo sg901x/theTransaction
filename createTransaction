@@ -1,0 +1,27 @@
+------------------------------     CREATE A TRANSACTION   -------------------------------
+
+--drop table #keranjang
+create table #keranjang(productID int, unitPrice int, Quantity int)     ------------- create a temporarty table
+INSERT INTO #keranjang (productID, unitPrice, Quantity)       --------------- fill the cart with products
+SELECT ProductID, UnitPrice, FLOOR(RAND() * (10-1+1)) as Quantity
+FROM Products
+--WHERE ProductID IN (3, 5, 8);   -------chose product to put in the cart
+where ProductID = FLOOR(RAND() * (10-1+1))
+
+select * from #keranjang
+
+declare @quantityProduct int = (select sum(Quantity) from #keranjang)
+declare @customer varchar(10) = (select CustomerID from Customers where CustomerID = 'BLAUS' )	-----select the customers
+declare @employee varchar(10) = (select EmployeeID from Employees where EmployeeID = '1' )	------select the employee
+declare @jasaPengiriman varchar (10) = (select ShipperID from Shippers where ShipperID = '2' )	 -------select the shipper
+declare @orderId table(orderID int) ---------table to save orderID from Orders
+
+
+insert into Orders(CustomerID, EmployeeID, OrderDate, ShipVia, Freight)	---------insert orders into TableOrder
+output inserted.OrderID into @orderID		--------------catch result to get the orderID
+values(@customer, @employee, GETDATE(), @jasaPengiriman, @quantityProduct*10)
+
+
+insert into [Order Details] ---------------insert product to Order Details
+select *, 0 as Discount from @orderID cross join #keranjang		------------- insert orderID as Foreign Key
+drop table #keranjang
