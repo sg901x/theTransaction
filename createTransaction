@@ -5,10 +5,10 @@ create table #keranjang(productID int, unitPrice int, Quantity int)     --------
 INSERT INTO #keranjang (productID, unitPrice, Quantity)       --------------- fill the cart with products
 SELECT ProductID, UnitPrice, FLOOR(RAND() * (10-1+1)) as Quantity
 FROM Products
---WHERE ProductID IN (3, 5, 8);   -------chose product to put in the cart
-where ProductID = FLOOR(RAND() * (10-1+1))
+--WHERE ProductID IN (3, 5, 8);   -------chose product to put in the cart, use this for 1 product or more
+where ProductID = FLOOR(RAND() * (10-1+1))  --------put one random product to cart
 
-select * from #keranjang
+--select * from #keranjang
 
 declare @quantityProduct int = (select sum(Quantity) from #keranjang)
 declare @customer varchar(10) = (select CustomerID from Customers where CustomerID = 'BLAUS' )	-----select the customers
